@@ -11,26 +11,36 @@ class SignIn extends React.Component {
     this.state = {
       email: "",
       password: "",
+      authErrorMessage: "",
     }
   }
 
   //this approach is limited to consuming only one context
   static contextType = UserAuthContext;
   
+  resetCredentialFields = () => this.setState({email: "", password: ""});
+
   handleSignIn = e => {
     e.preventDefault();
-    // firebase
-    //   .auth()
-    //   .signInWithEmailAndPassword(this.state.email, this.state.password)
-    //   .then(response => {
-    //     if (response.user) {
-    //       this.context.setIsUserAuthenticated(true);
-    //       this.props.history.push('/dashboard');
-    //     }
-    //   })
-    //   .catch(error => console.log(error))
-    this.context.setIsUserAuthenticated(true);
-    this.props.history.push('/dashboard');
+
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(this.state.email, this.state.password)
+      .then(response => {
+        if (response.user) {
+          this.context.setIsUserAuthenticated(true);
+          this.props.history.push('/dashboard');
+        }
+      })
+      .catch(error => {
+        let errorMessage;
+        error.code.includes('auth/')
+          ? errorMessage = 'Invalid credentials'
+          : errorMessage = 'An unexpected error occurred';
+
+        this.setState({authErrorMessage: errorMessage});
+        this.resetCredentialFields();
+      })
   }
   handleEmailInput = e => this.setState({email: e.target.value});
   handlePasswordInput = e => this.setState({password: e.target.value});
@@ -60,6 +70,8 @@ class SignIn extends React.Component {
             required
             placeholder="password"
           />
+
+          <span className="user-error-message">{this.state.authErrorMessage}</span>
 
           <button type="submit">Sign In</button>
         </form>
