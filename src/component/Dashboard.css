@@ -6,7 +6,7 @@
     'metrics expense-list expense-form'
     'footer footer footer';
   grid-template-rows: 10vh 7vh auto 5vh;
-  grid-template-columns: 25vw 50vw 25vw;
+  grid-template-columns: 15vw 62vw 23vw;
   height: 100vh;
 }
 #header-dashboard { grid-area: header; }
@@ -29,11 +29,26 @@ sub {
   font-size: 1rem;
 }
 
+#section-expense-add {
+  display: flex;
+  flex-direction: column;
+}
+
+.container-section {
+  height: 100%;
+  overflow-y: scroll;
+}
 #section-expense-list {
   background: #f8f8f8;
 }
 
-#section-expense-add {
-  display: flex;
-  flex-direction: column;
+.row-expense.header {
+  font-weight: bold;
+}
+.row-expense {
+  border-bottom: 1px solid #bebebe;
+  padding: 5px;
+  display: grid;
+  grid-template-columns: 35% 15% 15% 15% 10% 5%;
+  align-items: center;
 }

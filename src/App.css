@@ -28,6 +28,9 @@ button:hover {
   background: #bed7c4;
 }
 
+section {
+  padding: 20px;
+}
 form {
   padding: 20px;
 }

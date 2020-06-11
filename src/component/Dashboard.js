@@ -19,38 +19,69 @@ export default class Dashboard extends React.Component {
 
     this.state = {
       userNotification: "",
-      currentMonth: 6,
-      currentYear: 2020,
+      displayMonth: 0,
+      displayYear: 0,
+      monthYearOptions: [],
       currentMonthYearExpenses: [],
     }
   }
 
-  componentDidMount() { 
-    this.getExpenses(this.state.currentMonth, this.state.currentYear);
+  componentDidMount() {
+    const today = new Date();
+    const displayMonth = today.getMonth() + 1; //January is 0
+    const displayYear = today.getFullYear();
+
+    this.getExpenses(displayMonth, displayYear);
+    this.buildMonthYearOptions();
   }
 
-  componentWillUnmount() {
-    if (this.unsubscribeExpensesCollectionListener) {
-        this.unsubscribeExpensesCollectionListener();
-    }
+  buildMonthYearOptions = () => {
+    firebase.firestore()
+      .collection(dbCollectioNameExpenses)
+      .get()
+      .then(snapshot => {
+        let monthYearOptions = []
+        snapshot.forEach(doc => {   
+          const docData = doc.data();
+          const expenseMonth = docData.expenseMonth;
+          const expenseYear = docData.expenseYear;
+
+          const isFound = monthYearOptions.findIndex(option => 
+            (option.expenseMonth === expenseMonth && option.expenseYear === expenseYear)) === 1;
+          if (!isFound) {
+            monthYearOptions.push({expenseMonth, expenseYear})
+          }    
+        })
+        this.setState({monthYearOptions});
+      })
+      .catch(() => { //error
+        this.setState({userNotification: 'An error occurred while retrieving expenses.'})
+      });
   }
 
   getExpenses = (month, year) => {
-    this.unsubscribeExpensesCollectionListener = firebase.firestore()
+    firebase.firestore()
       .collection(dbCollectioNameExpenses)
       .where("expenseMonth", "==", month)
       .where("expenseYear", "==", year)
-      .onSnapshot(
-        snapshot => {
-          this.setState({expenses: snapshot.docs});
-          if (snapshot.docChanges().length === 1) { //to exclude initial load
-            this.setDBMessage(snapshot.docChanges()[0].type);
-          }
-        },
-        () => { //error
-          this.setState({userNotification: 'A database error has occurred.'})
-        }
-      );
+      .get()
+      .then(snapshot => {
+        let expenses = [];
+        snapshot.forEach(doc => {
+          expenses.push({
+            id: doc.id,
+            ...doc.data()
+          })
+        });
+        this.setState({
+          currentMonthYearExpenses: expenses,
+          displayMonth: month,
+          displayYear: year,
+        });
+      })
+      .catch(() => { //error
+        this.setState({userNotification: 'An error occurred while retrieving expenses.'})
+      });
   }
   
   handleExpenseAdd = expense => {
@@ -62,11 +93,17 @@ export default class Dashboard extends React.Component {
 
     firebase.firestore()
       .collection(dbCollectioNameExpenses)
-      .add(expenseToAdd);
+      .add(expenseToAdd)
+      .then(() => this.buildMonthYearOptions())
+    //todo: rebuild view
   }
 
   handleExpenseDelete = id => { 
 
+  }
+
+  handleMonthYearChange = (year, month) => {
+    this.getExpenses(month, year);
   }
 
   handleSignOut = e => {
@@ -82,18 +119,6 @@ export default class Dashboard extends React.Component {
       .catch(() => {
         this.setState({userNotification: 'An error occurred while attempting to sign out.'});
       })
-  }
-
-  setDBMessage = (changeType) => {
-    if (changeType === 'added') {
-      this.setState({userNotification: 'Expense added.'})
-    }
-    if (changeType === 'modified') {
-      this.setState({userNotification: 'Expense modified.'})
-    }
-    if (changeType === 'removed') {
-      this.setState({userNotification: 'Expense removed.'})
-    }
   }
 
   render() {
@@ -116,7 +141,14 @@ export default class Dashboard extends React.Component {
         </section>
 
         <section id="section-expense-list">
-          <ExpenseList />
+          <ExpenseList 
+            expenses={this.state.currentMonthYearExpenses} 
+            displayMonth={this.state.displayMonth}
+            displayYear={this.state.displayYear}
+            monthYearOptions={this.state.monthYearOptions}
+            onMonthYearChange={this.handleMonthYearChange} 
+            onExpenseDelete={this.handleExpenseDelete}
+          />
         </section>
         
         <section id="section-expense-add">  
