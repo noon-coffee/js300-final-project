@@ -1,32 +1,32 @@
 export const expenseCategories = [
   {
     value: "housing", 
-    display: "housing",
+    display: "Housing",
     monthlyBudget: 1700
   },
   {
     value: "food", 
-    display: "food",
+    display: "Food",
     monthlyBudget: 400,
   },
   {
     value: "transportation", 
-    display: "transportation",
+    display: "Transportation",
     monthlyBudget: 200,
   },
   {
     value: "healthcare", 
-    display: "healthcare",
+    display: "Healthcare",
     monthlyBudget: 400,
   },
   {
     value: "utilities", 
-    display: "utilities",
+    display: "Utilities",
     monthlyBudget: 350,
   },
   {
     value: "fun", 
-    display: "fun",
+    display: "Fun",
     monthlyBudget: 250
   },
 ]

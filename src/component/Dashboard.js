@@ -2,8 +2,11 @@ import React from 'react';
 import * as firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
+import './Dashboard.css';
 import UserAuthContext from '../context/UserAuthContext';
 import ExpenseForm from './ExpenseForm';
+import ExpenseList from './ExpenseList';
+import Metrics from './Metrics'
 
 
 const dbCollectioNameExpenses = 'expenses';
@@ -95,11 +98,34 @@ export default class Dashboard extends React.Component {
 
   render() {
     return (
-      <main>
-        <button onClick={this.handleSignOut}>Sign Out</button>
-        <span className="user-notification">{this.state.userNotification}</span>
-        <h2>Dashboard</h2>
-        <ExpenseForm onExpenseAdd={this.handleExpenseAdd} />
+      <main id="container-main-dashboard">
+        <header id="header-dashboard">
+          <h1>Follow the Bucks <sub>(An Expense Tracker)</sub></h1>
+          <div>
+            <button onClick={this.handleSignOut}>Sign Out</button>
+            <p>Hello, Responsible Spender</p>
+          </div>
+        </header>
+
+        <section id="section-notifications">
+          <span className="user-notification">{this.state.userNotification}</span>
+        </section>
+
+        <section id="section-metrics">
+          <Metrics />
+        </section>
+
+        <section id="section-expense-list">
+          <ExpenseList />
+        </section>
+        
+        <section id="section-expense-add">  
+          <ExpenseForm onExpenseAdd={this.handleExpenseAdd} />
+        </section>
+
+        <footer id="footer-dashboard">
+          <sub>Front-end Application Development: Course Final Project</sub>
+        </footer>
       </main>
     );
   }

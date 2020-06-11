@@ -1,0 +1,39 @@
+#container-main-dashboard {
+  display: grid;
+  grid-template-areas:
+    'header header header'
+    'metrics expense-list notifications'
+    'metrics expense-list expense-form'
+    'footer footer footer';
+  grid-template-rows: 10vh 7vh auto 5vh;
+  grid-template-columns: 25vw 50vw 25vw;
+  height: 100vh;
+}
+#header-dashboard { grid-area: header; }
+#section-notifications { grid-area: notifications; }
+#section-metrics { grid-area: metrics; }
+#section-expense-list { grid-area: expense-list; }
+#section-expense-add { grid-area: expense-form; }
+#footer-dashboard { grid-area: footer; }
+
+#header-dashboard,
+#footer-dashboard {
+  background-color: #eef5f0;
+  text-align: right;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+sub {
+  color: #5b5b5b;
+  font-size: 1rem;
+}
+
+#section-expense-list {
+  background: #f8f8f8;
+}
+
+#section-expense-add {
+  display: flex;
+  flex-direction: column;
+}

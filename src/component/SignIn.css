@@ -1,0 +1,14 @@
+#container-main-signin {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: #eef5f0;
+  height: 100vh;
+}
+
+#container-main-signin form {
+  background: #fff;
+  border: 1px solid #bebebe;
+  border-radius: 4px;
+}

@@ -1,6 +1,7 @@
 import React from 'react';
 import * as firebase from "firebase/app";
 import "firebase/auth";
+import "./SignIn.css"
 import UserAuthContext from '../context/UserAuthContext';
 
 
@@ -47,29 +48,37 @@ class SignIn extends React.Component {
   
   render() {
     return (
-      <main>
-        <h2>Sign In</h2>
-
+      <main id="container-main-signin">
         <form id="form-signin" onSubmit={this.handleSignIn}>
-          <input 
-            type="email"
-            id="email"
-            name="email"
-            value={this.state.email}
-            onChange={this.handleEmailInput}
-            required
-            placeholder="email"
-          />
+          <h2>Please Sign In</h2>
 
-          <input 
-            type="password"
-            id="password"
-            name="password"
-            value={this.state.password}
-            onChange={this.handlePasswordInput}
-            required
-            placeholder="password"
-          />
+          <div className="form-group">
+            <label htmlFor="email">Email</label>
+            <input 
+              name="email"
+              id="email"
+              className="form-control"
+              type="email"           
+              value={this.state.email}
+              onChange={this.handleEmailInput}
+              required
+              placeholder="email"
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
+            <input                        
+              name="password"
+              id="password"
+              className="form-control"
+              type="password"
+              value={this.state.password}
+              onChange={this.handlePasswordInput}
+              required
+              placeholder="password"
+            />
+          </div>
 
           <span className="user-error-message">{this.state.authErrorMessage}</span>
 
