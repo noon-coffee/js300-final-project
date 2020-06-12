@@ -12,3 +12,7 @@
   border: 1px solid #bebebe;
   border-radius: 4px;
 }
+
+.user-error-message {
+  display: block;
+}

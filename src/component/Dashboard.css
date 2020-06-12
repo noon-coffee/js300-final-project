@@ -105,3 +105,28 @@ sub {
 .grid-metric .amount {
   text-align: right;
 }
+
+button.tooltip-toggle {
+  background: #fff;
+  border: 1px solid #bebebe;
+  border-radius: 50%;
+  font-family: cursive;
+  font-size: 1.1rem;
+}
+.tooltip-data {
+  display: none;
+}
+.tooltip-toggle:hover {
+  background: #eef5f0;
+}
+.tooltip-toggle:hover + .tooltip-data {
+  background: #fff;
+  border: 1px solid #bebebe;
+  border-radius: 5px;
+  display: block;
+  padding: 8px;
+  position: absolute;
+  width: 250px;
+  word-wrap: break-word;
+  z-index: 1;
+}

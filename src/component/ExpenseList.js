@@ -38,23 +38,28 @@ export default class ExpenseList extends React.Component {
 
         <div id="grid-expense-list">
           <div className="header row-expense">
-            <span>Title</span>
-            <span>Date</span>
-            <span>Amount</span>
-            <span>Category</span>
-            <span>Notes</span>
+            <div>Title</div>
+            <div>Date</div>
+            <div>Amount</div>
+            <div>Category</div>
+            <div>Notes</div>
           </div>
 
           <>{ 
             expenses.map(expense => {
               return(
                 <div key={expense.id} className="item row-expense">
-                  <span>{expense.title}</span>
-                  <span>{DateHelper.formatExpenseDate(expense.expenseMonth, expense.expenseDay, expense.expenseYear)}</span>
-                  <span>{`$${expense.amount.toFixed(2)}`}</span>
-                  <span>{expenseCategories.find(category => expense.category === category.value).display}</span>
-                  <span>{expense.notes}</span>
-                  <span><button onClick={() => onExpenseDelete(expense.id)}>Delete</button></span>
+                  <div>{expense.title}</div>
+                  <div>{DateHelper.formatExpenseDate(expense.expenseMonth, expense.expenseDay, expense.expenseYear)}</div>
+                  <div>{`$${expense.amount.toFixed(2)}`}</div>
+                  <div>{expenseCategories.find(category => expense.category === category.value).display}</div>
+                  <div>
+                    <div className="tooltip-group">
+                      {expense.notes && <button className="tooltip-toggle">i</button>}
+                      <div className="tooltip-data">{expense.notes}</div>
+                    </div>
+                  </div>
+                  <div><button onClick={() => onExpenseDelete(expense.id)}>Delete</button></div>
                 </div>           
               );
             })
