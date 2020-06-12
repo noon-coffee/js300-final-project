@@ -7,6 +7,7 @@ import UserAuthContext from '../context/UserAuthContext';
 import ExpenseForm from './ExpenseForm';
 import ExpenseList from './ExpenseList';
 import Metrics from './Metrics'
+import DateHelper from '../utility/dateHelper';
 
 
 const dbCollectioNameExpenses = 'expenses';
@@ -17,46 +18,27 @@ export default class Dashboard extends React.Component {
   constructor(props) {
     super(props);
 
+    this.minExpenseDate = "2019-12-01";
+    this.now = new Date();
     this.state = {
       userNotification: "",
       displayMonth: 0,
       displayYear: 0,
-      monthYearOptions: [],
+      monthYearOptions: this.buildMonthYearOptions(),
       currentMonthYearExpenses: [],
     }
   }
 
   componentDidMount() {
-    const today = new Date();
-    const displayMonth = today.getMonth() + 1; //January is 0
-    const displayYear = today.getFullYear();
-
+    const displayMonth = this.now.getMonth() + 1; //January is 0
+    const displayYear = this.now.getFullYear();  
     this.getExpenses(displayMonth, displayYear);
-    this.buildMonthYearOptions();
   }
 
   buildMonthYearOptions = () => {
-    firebase.firestore()
-      .collection(dbCollectioNameExpenses)
-      .get()
-      .then(snapshot => {
-        let monthYearOptions = []
-        snapshot.forEach(doc => {   
-          const docData = doc.data();
-          const expenseMonth = docData.expenseMonth;
-          const expenseYear = docData.expenseYear;
-
-          const isFound = monthYearOptions.findIndex(option => 
-            (option.expenseMonth === expenseMonth && option.expenseYear === expenseYear)) === 1;
-          if (!isFound) {
-            monthYearOptions.push({expenseMonth, expenseYear})
-          }    
-        })
-        this.setState({monthYearOptions});
-      })
-      .catch(() => { //error
-        this.setState({userNotification: 'An error occurred while retrieving expenses.'})
-      });
+    const start = this.minExpenseDate;
+    const end = DateHelper.getCalendarDateString(this.now);
+    return DateHelper.getMonthYearOptions(start, end);
   }
 
   getExpenses = (month, year) => {
@@ -73,11 +55,12 @@ export default class Dashboard extends React.Component {
             ...doc.data()
           })
         });
+
         this.setState({
           currentMonthYearExpenses: expenses,
           displayMonth: month,
           displayYear: year,
-        });
+        })
       })
       .catch(() => { //error
         this.setState({userNotification: 'An error occurred while retrieving expenses.'})
@@ -94,12 +77,26 @@ export default class Dashboard extends React.Component {
     firebase.firestore()
       .collection(dbCollectioNameExpenses)
       .add(expenseToAdd)
-      .then(() => this.buildMonthYearOptions())
-    //todo: rebuild view
+      .then(() => {
+        // Should only need to refresh the expense list if the newly added expense is to be displayed in the current year-month view;
+        // otherwise, a get will be performed upon year-month selection change.
+        const {displayMonth, displayYear} = this.state;
+        if (expenseToAdd.expenseMonth === displayMonth && expenseToAdd.expenseYear === displayYear) {
+          this.getExpenses(displayMonth, displayYear);
+        }
+      })
+      .catch(() => console.log('Error adding expense.'));
   }
 
   handleExpenseDelete = id => { 
-
+    firebase.firestore()
+      .collection(dbCollectioNameExpenses)
+      .doc(id)
+      .delete()
+      .then(() => {
+        this.getExpenses(this.state.displayMonth, this.state.displayYear);
+      })
+      .catch(() => console.log('Error removing expense.'));
   }
 
   handleMonthYearChange = (year, month) => {
@@ -137,7 +134,9 @@ export default class Dashboard extends React.Component {
         </section>
 
         <section id="section-metrics">
-          <Metrics />
+          <Metrics
+            expenses={this.state.currentMonthYearExpenses} 
+          />
         </section>
 
         <section id="section-expense-list">
@@ -152,7 +151,11 @@ export default class Dashboard extends React.Component {
         </section>
         
         <section id="section-expense-add">  
-          <ExpenseForm onExpenseAdd={this.handleExpenseAdd} />
+          <ExpenseForm
+            minExpenseDate={this.minExpenseDate}
+            today = {this.now}
+            onExpenseAdd={this.handleExpenseAdd} 
+          />
         </section>
 
         <footer id="footer-dashboard">

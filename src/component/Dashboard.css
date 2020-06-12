@@ -29,19 +29,28 @@ sub {
   font-size: 1rem;
 }
 
-#section-expense-add {
-  display: flex;
-  flex-direction: column;
+#form-expense #amount {
+  width: 95%;
+}
+#form-expense span.currency-symbol {  
+  display: inline-block;
+  font-weight: bold;
+  font-size: 0.8rem;
+  width: 5%;
 }
 
 .container-section {
   height: 100%;
   overflow-y: scroll;
+  padding-right: 15px;
 }
+
 #section-expense-list {
   background: #f8f8f8;
 }
-
+#grid-expense-list {
+  margin-top: 20px;
+}
 .row-expense.header {
   font-weight: bold;
 }
@@ -51,4 +60,48 @@ sub {
   display: grid;
   grid-template-columns: 35% 15% 15% 15% 10% 5%;
   align-items: center;
+}
+
+.container-metrics {
+  display: flex;
+  flex-direction: column;
+}
+
+.grid-metric {
+  border: 1px solid #bebebe;
+  border-radius: 3px;
+  padding: 5px 15px 5px 0;
+  margin-bottom: 15px;
+  display: grid;
+  grid-template-areas:
+    'health-indicator header header'
+    'health-indicator budget-title budget-amount'
+    'health-indicator actual-title actual-amount';
+  grid-template-rows: repeat(3, 1.5rem);
+  grid-template-columns: 10px 50px auto;
+  column-gap: 10px;
+  justify-items: stretch;
+}
+.grid-metric .header { 
+  grid-area: header; 
+  font-weight: bold;
+}
+.grid-metric .health-indicator { grid-area: health-indicator; }
+.grid-metric .budget.title { grid-area: budget-title; }
+.grid-metric .budget.amount { grid-area: budget-amount; }
+.grid-metric .actual.title { grid-area: actual-title; }
+.grid-metric .actual.amount { grid-area: actual-amount; }
+
+.grid-metric .health-indicator.healthy {
+  background: #6cae43;
+}
+.grid-metric .health-indicator.unhealthy {
+  background: #bf0b0b;
+}
+.grid-metric .title {
+  color: #5b5b5b;
+  font-size: 0.9rem;
+}
+.grid-metric .amount {
+  text-align: right;
 }

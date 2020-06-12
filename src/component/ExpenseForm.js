@@ -1,44 +1,35 @@
 import React from 'react';
-import { expenseCategories } from '../data/category';
-
+import { expenseCategories } from '../utility/category';
+import DateHelper from '../utility/dateHelper';
 
 export default class Dashboard extends React.Component {
   constructor(props) {
     super(props);
+    this.today = DateHelper.getCalendarDateString(this.props.today);
     this.state = this.emptyForm;
-    this.minExpenseDate = "2019-12-01";
   }
 
   get emptyForm() {
     return {
       title: "",
-      expenseDate: this.todayString,
+      expenseDate: this.today,
       amount: "",
       category: expenseCategories[0].value,
       notes: "",
     };
   }
 
-  get todayString() { 
-    const today = new Date();
-    const dd = String(today.getDate()).padStart(2, '0');
-    const mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0
-    const yyyy = today.getFullYear();
-
-    return `${yyyy}-${mm}-${dd}`;
-  }
-
   handleFormSubmit = e => {
     e.preventDefault();
     const {title, expenseDate, amount, category, notes} = this.state;
-    const expenseDateParts = expenseDate.split('-');
+    const dateParts = DateHelper.getCalendarDateParts(expenseDate);
 
     const expense = {
       title,
-      expenseMonth: +expenseDateParts[1],
-      expenseYear: +expenseDateParts[0],
-      expenseDay: +expenseDateParts[2],
-      amount: +(Number(amount).toFixed(2)),
+      expenseMonth: dateParts.monthNum,
+      expenseYear: dateParts.yearNum,
+      expenseDay: dateParts.dayNum,
+      amount: +amount,
       category,
       notes
     }
@@ -54,6 +45,7 @@ export default class Dashboard extends React.Component {
 
   render() {
     const {title, expenseDate, amount, category, notes} = this.state;
+    const {minExpenseDate} = this.props;
     return (
       <form id="form-expense" onSubmit={this.handleFormSubmit}>
         <h2>Add Expense</h2>
@@ -79,7 +71,7 @@ export default class Dashboard extends React.Component {
         <div className="form-group required">
           <label htmlFor="expenseDate">Expense Date</label>
           <p className="info-secondary">
-            Date between {this.minExpenseDate} and {this.todayString} (today).
+            Date between {minExpenseDate} and {this.today} (today).
           </p>
           <input 
             name="expenseDate"
@@ -89,9 +81,9 @@ export default class Dashboard extends React.Component {
             value={expenseDate}
             onChange={this.handleFieldInput}
             required
-            min={this.minExpenseDate}
-            max={this.todayString}
-          />
+            min={minExpenseDate}
+            max={this.today}
+          />         
         </div>
 
         {/* Amount */}
@@ -100,18 +92,21 @@ export default class Dashboard extends React.Component {
           <p className="info-secondary">
             Amount between a penny and $8,000 (which is A LOT!).
           </p>
-          <input 
-            name="amount"
-            id="amount"
-            className="form-control"
-            type="number"
-            value={amount}
-            onChange={this.handleFieldInput}
-            required
-            min="0.01"
-            max="8000"
-            step="0.01"
-          />
+          <div>
+            <span className="currency-symbol">$</span>
+            <input 
+              name="amount"
+              id="amount"
+              className="form-control"
+              type="number"
+              value={amount}
+              onChange={this.handleFieldInput}
+              required
+              min="0.01"
+              max="8000"
+              step="0.01"
+            />
+          </div>
         </div>
 
         {/* Category */}
@@ -137,7 +132,7 @@ export default class Dashboard extends React.Component {
         <div className="form-group">
           <label htmlFor="notes">Notes</label>
           <p className="info-secondary">
-            Any additional info or details?
+            Any additional info or details? Max of 75 characters.
           </p>
           <textarea
             name="notes"

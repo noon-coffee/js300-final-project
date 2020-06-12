@@ -1,16 +1,12 @@
 import React from 'react';
+import DateHelper from '../utility/dateHelper';
+import {expenseCategories} from '../utility/category';
 
 
 export default class ExpenseList extends React.Component {
-  formatExpenseDate = (month, day, year) => 
-    `${String(month).padStart(2, '0')}/${String(day).padStart(2, '0')}/${year}`;
-  formatYearMonth = (year, month) => `${year}-${month}`;
-
-  handleFieldInput = e => {
-    const yearMonthParts = e.target.value.split('-')
-    const year = +yearMonthParts[0];
-    const month = +yearMonthParts[1];
-    this.props.onMonthYearChange(year, month);
+  handleMonthYearSelection = e => {
+    const monthYearParts = DateHelper.getMonthYearOptionParts(e.target.value);
+    this.props.onMonthYearChange(monthYearParts.yearNum, monthYearParts.monthNum);
   }
 
   render() {
@@ -21,24 +17,26 @@ export default class ExpenseList extends React.Component {
         <h2>Expense List</h2>
 
         <div>
+          <span>View expenses for year-month: </span>
           <select 
             name="monthYear" 
             id="monthYear" 
-            value={this.formatYearMonth(displayYear, displayMonth)}
-            onChange={this.handleFieldInput}
+            className="control"
+            value={DateHelper.formatMonthYearOptionValue(displayYear, displayMonth)}
+            onChange={this.handleMonthYearSelection}
           >
             {
               monthYearOptions.map((option, index) => 
                 <option 
                   key={index} 
-                  value={this.formatYearMonth(option.expenseYear, option.expenseMonth)}>
-                  {this.formatYearMonth(option.expenseYear, option.expenseMonth)}
+                  value={option.value}>
+                  {option.display}
                 </option>)
             }
           </select>
         </div>
 
-        <div id="grid-expenses">
+        <div id="grid-expense-list">
           <div className="header row-expense">
             <span>Title</span>
             <span>Date</span>
@@ -52,9 +50,9 @@ export default class ExpenseList extends React.Component {
               return(
                 <div key={expense.id} className="item row-expense">
                   <span>{expense.title}</span>
-                  <span>{this.formatExpenseDate(expense.expenseMonth, expense.expenseDay, expense.expenseYear)}</span>
-                  <span>{`$${expense.amount}`}</span>
-                  <span>{expense.category}</span>
+                  <span>{DateHelper.formatExpenseDate(expense.expenseMonth, expense.expenseDay, expense.expenseYear)}</span>
+                  <span>{`$${expense.amount.toFixed(2)}`}</span>
+                  <span>{expenseCategories.find(category => expense.category === category.value).display}</span>
                   <span>{expense.notes}</span>
                   <span><button onClick={() => onExpenseDelete(expense.id)}>Delete</button></span>
                 </div>           

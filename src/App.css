@@ -52,6 +52,13 @@ form {
   width: 100%;
 }
 
+.control {
+  border: 1px solid #bebebe;
+  border-radius: 3px;
+  display: inline-block;
+  padding: 5px;
+}
+
 .info-secondary {
   color: #5b5b5b;
   font-size: 0.85rem;
