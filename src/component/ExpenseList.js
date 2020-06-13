@@ -59,7 +59,7 @@ export default class ExpenseList extends React.Component {
                       <div className="tooltip-data">{expense.notes}</div>
                     </div>
                   </div>
-                  <div><button onClick={() => onExpenseDelete(expense.id)}>Delete</button></div>
+                  <div><button onClick={() => onExpenseDelete(expense)}>Delete</button></div>
                 </div>           
               );
             })

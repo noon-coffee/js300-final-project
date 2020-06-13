@@ -62,9 +62,7 @@ export default class Dashboard extends React.Component {
           displayYear: year,
         })
       })
-      .catch(() => { //error
-        this.setState({userNotification: 'An error occurred while retrieving expenses.'})
-      });
+      .catch(() => this.setState({userNotification: 'An error occurred when retrieving expenses.'}));
   }
   
   handleExpenseAdd = expense => {
@@ -84,19 +82,33 @@ export default class Dashboard extends React.Component {
         if (expenseToAdd.expenseMonth === displayMonth && expenseToAdd.expenseYear === displayYear) {
           this.getExpenses(displayMonth, displayYear);
         }
+
+        const userNotification = `Created expense "${expense.title}".`
+        this.setState({ userNotification }, () => {
+          setTimeout(() => {
+            this.setState({userNotification: ''})
+          }, 3000)
+        });
       })
-      .catch(() => console.log('Error adding expense.'));
+      .catch(() => this.setState({userNotification: 'An error occurred when adding an expense.'}));
   }
 
-  handleExpenseDelete = id => { 
+  handleExpenseDelete = expense => { 
     firebase.firestore()
       .collection(dbCollectioNameExpenses)
-      .doc(id)
+      .doc(expense.id)
       .delete()
       .then(() => {
         this.getExpenses(this.state.displayMonth, this.state.displayYear);
+
+        const userNotification = `Deleted expense "${expense.title}".`;
+        this.setState({ userNotification }, () => {
+          setTimeout(() => {
+            this.setState({userNotification: ''})
+          }, 5000)
+        });
       })
-      .catch(() => console.log('Error removing expense.'));
+      .catch(() => this.setState({userNotification: 'An error occurred when removing an expense.'}));
   }
 
   handleMonthYearChange = (year, month) => {
@@ -129,8 +141,11 @@ export default class Dashboard extends React.Component {
           </div>
         </header>
 
-        <section id="section-notifications">
-          <span className="user-notification">{this.state.userNotification}</span>
+        <section 
+          id="section-notifications"
+          className={`user-notification ${this.state.userNotification === '' ? 'hide' : 'show'}`}
+        >
+          <span>{this.state.userNotification}</span>
         </section>
 
         <section id="section-metrics">

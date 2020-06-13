@@ -30,9 +30,9 @@ export default class Metrics extends React.Component {
       <div className="container-section">
         <h2>Metrics</h2>
         <div className="container-metrics"> {
-          metrics.map(metric => {
+          metrics.map((metric, index) => {
             return(
-              <div className="grid-metric">
+              <div key={index} className="grid-metric">
                 <div 
                   className={`health-indicator ${metric.actual > metric.budget ? 'unhealthy' : 'healthy'}`}>
                 </div>

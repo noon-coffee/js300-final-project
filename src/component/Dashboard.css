@@ -130,3 +130,22 @@ button.tooltip-toggle {
   word-wrap: break-word;
   z-index: 1;
 }
+
+#section-notifications {
+  background: #fef5ed;
+  border: 1px solid #fdc398;
+  border-radius: 15px;
+  margin: 10px 25px 10px 15px;
+  align-self: start;
+}
+
+#section-notifications.show {
+  visibility: visible;
+  opacity: 1;
+  transition: visibility 0s linear 0s, opacity 300ms;
+}
+#section-notifications.hide {
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s linear 300ms, opacity 300ms;
+}
