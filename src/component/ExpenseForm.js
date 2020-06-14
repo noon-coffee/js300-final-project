@@ -1,8 +1,9 @@
 import React from 'react';
+import {func, instanceOf, string} from 'prop-types';
 import { expenseCategories } from '../utility/category';
 import DateHelper from '../utility/dateHelper';
 
-export default class Dashboard extends React.Component {
+export default class ExpenseForm extends React.Component {
   constructor(props) {
     super(props);
     this.today = DateHelper.getCalendarDateString(this.props.today);
@@ -14,7 +15,7 @@ export default class Dashboard extends React.Component {
       title: "",
       expenseDate: this.today,
       amount: "",
-      category: expenseCategories[0].value,
+      category: "utilities",
       notes: "",
     };
   }
@@ -117,7 +118,7 @@ export default class Dashboard extends React.Component {
             name="category" 
             id="category" 
             className="form-control"
-            value={category.value}
+            value={category}
             onChange={this.handleFieldInput}
             required
           >
@@ -152,3 +153,9 @@ export default class Dashboard extends React.Component {
     );
   }
 }
+
+ExpenseForm.propTypes = {
+  minExpenseDate: string.isRequired,
+  today: instanceOf(Date).isRequired,
+  onExpenseAdd: func.isRequired,
+};

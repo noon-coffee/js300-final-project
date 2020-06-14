@@ -1,4 +1,5 @@
 import React from 'react';
+import {array} from 'prop-types';
 import {expenseCategories} from '../utility/category';
 
 export default class Metrics extends React.Component {
@@ -57,3 +58,7 @@ export default class Metrics extends React.Component {
     );
   }
 }
+
+Metrics.propTypes = {
+  expenses: array.isRequired,
+};

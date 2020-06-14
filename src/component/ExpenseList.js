@@ -1,4 +1,5 @@
 import React from 'react';
+import {array, func, number} from 'prop-types';
 import DateHelper from '../utility/dateHelper';
 import {expenseCategories} from '../utility/category';
 
@@ -69,3 +70,12 @@ export default class ExpenseList extends React.Component {
     );
   }
 }
+
+ExpenseList.propTypes = {
+  expenses: array.isRequired,
+  displayMonth: number.isRequired,
+  displayYear: number.isRequired,
+  monthYearOptions: array.isRequired,
+  onMonthYearChange: func.isRequired,
+  onExpenseDelete: func.isRequired,
+};
